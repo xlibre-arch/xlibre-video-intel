@@ -3,7 +3,7 @@
 _basename="xf86-video-intel"
 pkgname="${_basename//xf86/xlibre}"
 pkgver=3.0.0.1
-pkgrel=1
+pkgrel=2
 pkgdesc="XLibre Intel i810/i830/i915/945G/G965+ video driver"
 arch=('aarch64' 'x86_64')
 url="https://github.com/X11Libre/${_basename}"
@@ -19,10 +19,10 @@ optdepends=('libxrandr: for intel-virtual-output'
             'libxcursor: for intel-virtual-output'
             'libxtst: for intel-virtual-output'
             'libxss: for intel-virtual-output')
-provides=("${_basename}" 'xf86-video-intel-uxa' 'xf86-video-intel-sna')
+# provides=("${_basename}" 'xf86-video-intel-uxa' 'xf86-video-intel-sna')
 conflicts=("${_basename}" 'xf86-video-intel-uxa' 'xf86-video-intel-sna' 'xf86-video-i810' 'xf86-video-intel-legacy'
            'xorg-server<21.1.1' 'X-ABI-VIDEODRV_VERSION<28' 'X-ABI-VIDEODRV_VERSION>=29')
-replaces=('xf86-video-intel-uxa' 'xf86-video-intel-sna')
+# replaces=('xf86-video-intel-uxa' 'xf86-video-intel-sna')
 groups=('xlibre-drivers')
 options=('!lto')
 _pkgsrc="${_basename}-xlibre-${_basename}-${pkgver}"
