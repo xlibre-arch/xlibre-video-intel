@@ -1,4 +1,5 @@
 # Maintainer:  Vitalii Kuzhdin <vitaliikuzhdin@gmail.com>
+# Maintainer:  artist for XLibre
 
 _basename="xf86-video-intel"
 pkgname="${_basename//xf86/xlibre}"
@@ -19,10 +20,10 @@ optdepends=('libxrandr: for intel-virtual-output'
             'libxcursor: for intel-virtual-output'
             'libxtst: for intel-virtual-output'
             'libxss: for intel-virtual-output')
-# provides=("${_basename}" 'xf86-video-intel-uxa' 'xf86-video-intel-sna')
+provides=("${_basename}" 'xf86-video-intel-uxa' 'xf86-video-intel-sna')
 conflicts=("${_basename}" 'xf86-video-intel-uxa' 'xf86-video-intel-sna' 'xf86-video-i810' 'xf86-video-intel-legacy'
            'xorg-server<21.1.1' 'X-ABI-VIDEODRV_VERSION<28' 'X-ABI-VIDEODRV_VERSION>=29')
-# replaces=('xf86-video-intel-uxa' 'xf86-video-intel-sna')
+replaces=('xf86-video-intel-uxa' 'xf86-video-intel-sna')
 groups=('xlibre-drivers')
 options=('!lto')
 _pkgsrc="${_basename}-xlibre-${_basename}-${pkgver}"
