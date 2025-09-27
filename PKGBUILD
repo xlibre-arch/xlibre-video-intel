@@ -3,7 +3,7 @@
 
 _basename="xf86-video-intel"
 pkgname="${_basename//xf86/xlibre}"
-pkgver=3.0.0.2
+pkgver=3.0.0.4
 pkgrel=1
 pkgdesc="XLibre Intel i810/i830/i915/945G/G965+ video driver"
 arch=('aarch64' 'x86_64')
@@ -28,7 +28,7 @@ groups=('xlibre-drivers')
 options=('!lto')
 _pkgsrc="${_basename}-xlibre-${_basename}-${pkgver}"
 source=("${_pkgsrc}.tar.gz::${url}/archive/refs/tags/xlibre-${_basename}-${pkgver}.tar.gz")
-b2sums=('c3c2575e1e03b119cbf0ca2819186f2fc8b39e7e35fff2492c6967241858b344875c0ebfaa88c8b3b935b05dc12f44b7d35a7bf4ccf15c7488046ff0dcf5cb9b')
+b2sums=('0b696b27818d496bb8f73e5c2e46813552b493286e85be2b31239a69298a77bce6a0992eb0c5ce8b2d1136efd99202aec87a8ab077b0047092dce657b37a5512')
 
 build() {
   # Since pacman 5.0.2-2, hardened flags are now enabled in makepkg.conf
