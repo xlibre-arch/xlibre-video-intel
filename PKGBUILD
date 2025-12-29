@@ -1,17 +1,24 @@
-# Maintainer:  artist for XLibre <artist4xlibre@proton.me>
+# Maintainer: artist for Artix Linux and XLibre <artist@artixlinux.org>
 
-_basename="xf86-video-intel"
-pkgname="${_basename//xf86/xlibre}"
-pkgver=3.0.0.6
-pkgrel=1
-pkgdesc="XLibre Intel i810/i830/i915/945G/G965+ video driver"
-arch=('aarch64' 'x86_64')
-url="https://github.com/X11Libre/${_basename}"
+pkgname=xlibre-video-intel
+pkgver=25.0.0
+pkgrel=6
+arch=(x86_64)
 license=('MIT')
-depends=('glibc' 'libpciaccess' 'libx11' 'libxcb' 'libxdamage' 'libdrm'
-         'libxext' 'libxfixes' 'libxrender' 'libxshmfence' 'libxvmc' 'mesa'
-         'pixman' 'systemd-libs' 'xcb-util>=0.3.9')
-makedepends=('xlibre-server-devel' 'libxv' 'X-ABI-VIDEODRV_VERSION=28.0'
+install=$pkgname.install
+pkgdesc="Libre fork of X.Org Intel i810/i830/i915/945G/G965+ video drivers"
+_pkgname="${pkgname//xlibre/xf86}"
+url="https://github.com/X11Libre/${_pkgname}"
+depends=("xlibre-xserver>=${pkgver%.*}" 'glibc')
+makedepends=("xlibre-xserver-devel>=${pkgver%.*}" 'xorgproto')
+conflicts=("${_pkgname}")
+provides=("${_pkgname}")
+source=("${url}/archive/refs/tags/xlibre-${_pkgname}-${pkgver}.tar.gz")
+groups=('xlibre-drivers')
+depends+=('mesa' 'libxvmc' 'pixman>=0.27.1' 'xcb-util>=0.3.9'
+         'libxcb' 'libxfixes' 'libxshmfence' 'libdrm' 'libxrender'
+         'libx11' 'libxdamage' 'libxext' 'libpciaccess>= 0.10')
+makedepends+=('libxv' 'meson>=0.50'
              # additional deps for intel-virtual-output
              'libxrandr' 'libxinerama' 'libxcursor' 'libxtst' 'libxss')
 optdepends=('libxrandr: for intel-virtual-output'
@@ -19,39 +26,35 @@ optdepends=('libxrandr: for intel-virtual-output'
             'libxcursor: for intel-virtual-output'
             'libxtst: for intel-virtual-output'
             'libxss: for intel-virtual-output')
-provides=("${_basename}" 'xf86-video-intel-uxa' 'xf86-video-intel-sna')
-conflicts=("${_basename}" 'xf86-video-intel-uxa' 'xf86-video-intel-sna' 'xf86-video-i810' 'xf86-video-intel-legacy'
-           'xorg-server<21.1.1' 'X-ABI-VIDEODRV_VERSION<28' 'X-ABI-VIDEODRV_VERSION>=29')
-replaces=('xf86-video-intel-uxa' 'xf86-video-intel-sna')
-groups=('xlibre-drivers')
+provides+=('xf86-video-intel-uxa' 'xf86-video-intel-sna')
+replaces=('xf86-video-intel-sna' 'xf86-video-intel-uxa'
+          'xf86-video-i810' 'xf86-video-intel-legacy')
 options=('!lto')
-_pkgsrc="${_basename}-xlibre-${_basename}-${pkgver}"
-source=("${_pkgsrc}.tar.gz::${url}/archive/refs/tags/xlibre-${_basename}-${pkgver}.tar.gz")
-b2sums=('6189ea74f8106c3b0b863d2097110be3339df6e16c8a7513d0d90ad354f9ee3f15c2ffc75137427eaf9250286dc19b4a919a5c9746faef459b734f12d6745a70')
 
 build() {
-  # Since pacman 5.0.2-2, hardened flags are now enabled in makepkg.conf
-  # With them, modules fail to load with undefined symbol.
-  # See https://bugs.archlinux.org/task/55102 / https://bugs.archlinux.org/task/54845
-  export CFLAGS="${CFLAGS/-fno-plt}"
-  export CXXFLAGS="${CXXFLAGS/-fno-plt}"
-  export LDFLAGS="${LDFLAGS/-Wl,-z,now}"
-  local configure_options=(
-    --prefix='/usr'
-    --libexecdir='/usr/lib'
-    --with-default-dri=3
-  )
+  export CFLAGS=${CFLAGS/-fno-plt}
+  export CFLAGS+=" -Wno-incompatible-pointer-types"
+  export CXXFLAGS=${CXXFLAGS/-fno-plt}
+  export LDFLAGS=${LDFLAGS/-Wl,-z,now}
+  export CFLAGS+=" -I${srcdir}/build"
+  
+  arch-meson ${_pkgname}-xlibre-${_pkgname}-${pkgver} build \
+    -D dri3=true \
+    -D tearfree=true \
+    -D valgrind=false
 
-  cd "${srcdir}/${_pkgsrc}"
-  autoreconf -vfi
-  ./configure "${configure_options[@]}"
-  make
+  meson configure build
+  ninja -C build
+}
+
+check() {
+  meson test -C build
 }
 
 package() {
-  cd "${srcdir}/${_pkgsrc}"
-  make DESTDIR="${pkgdir}" install
+  DESTDIR="$pkgdir" ninja -C build install
 
-  install -vDm644 "README"  "${pkgdir}/usr/share/doc/${pkgname}/README"
-  install -vDm644 "COPYING" "${pkgdir}/usr/share/licenses/${pkgname}/COPYING"
+  install -Dm644 "${srcdir}"/${_pkgname}-xlibre-${_pkgname}-${pkgver}/COPYING "${pkgdir}"/usr/share/licenses/${pkgname}/LICENSE
 }
+
+sha256sums=('c37410bc6efd5789adcd9fd2c91308a73101b08419309d4755bd6b5fa5254eff')
