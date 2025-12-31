@@ -3,7 +3,7 @@
 pkgname=xlibre-video-intel
 pkgver=25.0.0
 pkgrel=6
-arch=(x86_64)
+arch=(x86_64 aarch64)
 license=('MIT')
 install=$pkgname.install
 pkgdesc="Libre fork of X.Org Intel i810/i830/i915/945G/G965+ video drivers"
